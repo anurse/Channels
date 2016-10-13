@@ -256,10 +256,7 @@ namespace Channels
         /// </summary>
         /// <returns>A <see cref="ReadableChannelAwaitable"/> representing the asynchronous read operation.</returns>
         // Called by the READER
-        public ReadableChannelAwaitable ReadAsync()
-        {
-            return new ReadableChannelAwaitable(this);
-        }
+        public ReadableChannelAwaitable ReadAsync(CancellationToken cancellationToken) => new ReadableChannelAwaitable(this, cancellationToken);
 
         // Called by the READER
         void IReadableBufferAwaiter.OnCompleted(Action continuation)

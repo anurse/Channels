@@ -179,7 +179,29 @@ namespace Channels.Tests
         }
 
         [Fact]
-        public async Task ReadingCanBeCancelled()
+        public async Task ReadingCanBeCancelledByReader()
+        {
+            using (var cf = new ChannelFactory())
+            {
+                var channel = cf.CreateChannel();
+                var cts = new CancellationTokenSource();
+
+                var ignore = Task.Run(async () =>
+                {
+                    await Task.Delay(1000);
+                    cts.Cancel();
+                });
+
+                await Assert.ThrowsAsync<OperationCanceledException>(async () =>
+                {
+                    var result = await channel.ReadAsync(cts.Token);
+                    var buffer = result.Buffer;
+                });
+            }
+        }
+
+        [Fact]
+        public async Task ReadingCanBeCancelledByWriter()
         {
             using (var cf = new ChannelFactory())
             {

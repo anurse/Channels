@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace Channels
 {
@@ -9,20 +10,33 @@ namespace Channels
     public struct ReadableChannelAwaitable : ICriticalNotifyCompletion
     {
         private readonly IReadableBufferAwaiter _awaiter;
+        private readonly CancellationToken _cancellationToken;
+        private IDisposable _cancellationRegistration;
 
-        public ReadableChannelAwaitable(IReadableBufferAwaiter awaiter)
+        public ReadableChannelAwaitable(IReadableBufferAwaiter awaiter, CancellationToken cancellationToken)
         {
             _awaiter = awaiter;
+            _cancellationToken = cancellationToken;
+            _cancellationRegistration = null;
         }
 
-        public bool IsCompleted => _awaiter.IsCompleted;
+        public bool IsCompleted => _cancellationToken.IsCancellationRequested || _awaiter.IsCompleted;
 
-        public ChannelReadResult GetResult() => _awaiter.GetResult();
+        public ChannelReadResult GetResult()
+        {
+            _cancellationRegistration?.Dispose();
+            _cancellationToken.ThrowIfCancellationRequested();
+            return _awaiter.GetResult();
+        }
 
         public ReadableChannelAwaitable GetAwaiter() => this;
 
-        public void UnsafeOnCompleted(Action continuation) => _awaiter.OnCompleted(continuation);
+        public void UnsafeOnCompleted(Action continuation) => OnCompleted(continuation);
 
-        public void OnCompleted(Action continuation) => _awaiter.OnCompleted(continuation);
+        public void OnCompleted(Action continuation)
+        {
+            _cancellationRegistration = _cancellationToken.Register(continuation);
+            _awaiter.OnCompleted(continuation);
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Channels
@@ -12,7 +13,7 @@ namespace Channels
         /// Asynchronously reads a sequence of bytes from the current <see cref="IReadableChannel"/>.
         /// </summary>
         /// <returns>A <see cref="ReadableChannelAwaitable"/> representing the asynchronous read operation.</returns>
-        ReadableChannelAwaitable ReadAsync();
+        ReadableChannelAwaitable ReadAsync(CancellationToken cancellationToken);
 
         /// <summary>
         /// Moves forward the channel's read cursor to after the consumed data.

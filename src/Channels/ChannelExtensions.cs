@@ -29,6 +29,8 @@ namespace Channels
 
     public static class ReadableChannelExtensions
     {
+        public static ReadableChannelAwaitable ReadAsync(this IReadableChannel input) => input.ReadAsync(CancellationToken.None);
+
         public static void Advance(this IReadableChannel input, ReadCursor cursor)
         {
             input.Advance(cursor, cursor);

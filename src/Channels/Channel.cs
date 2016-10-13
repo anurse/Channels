@@ -460,7 +460,7 @@ namespace Channels
         /// Asynchronously reads a sequence of bytes from the current <see cref="IReadableChannel"/>.
         /// </summary>
         /// <returns>A <see cref="ReadableChannelAwaitable"/> representing the asynchronous read operation.</returns>
-        public ReadableChannelAwaitable ReadAsync() => new ReadableChannelAwaitable(this);
+        public ReadableChannelAwaitable ReadAsync(CancellationToken token) => new ReadableChannelAwaitable(this, token);
 
         void IReadableBufferAwaiter.OnCompleted(Action continuation)
         {

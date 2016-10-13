@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Channels
@@ -49,6 +50,6 @@ namespace Channels
         /// Asynchronously reads a sequence of bytes from the current <see cref="ReadableChannel"/>.
         /// </summary>
         /// <returns>A <see cref="ReadableChannelAwaitable"/> representing the asynchronous read operation.</returns>
-        public ReadableChannelAwaitable ReadAsync() => _channel.ReadAsync();
+        public ReadableChannelAwaitable ReadAsync(CancellationToken cancellationToken) => _channel.ReadAsync(cancellationToken);
     }
 }
